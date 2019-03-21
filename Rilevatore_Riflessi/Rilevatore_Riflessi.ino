@@ -2,15 +2,15 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //VARIABILI IN INPUT OVVERO I 3 BOTTONI PRESENTI
-int btn_Inizio          = 1;
-int btn_PrimoRiflesso   = 3;
+int btn_Inizio          = 13;
+int btn_PrimoRiflesso   = 1;
 int btn_SecondoRiflesso = 5;
 
 //VARIABILI IN OUTPIUT, OVVERO I LED BLU, ROSSO, VERDE E IL BUZZER
-int ledBlu              = 7;
+int ledBlu              = 3;
+int buzzer              = 7;
 int ledRosso            = 9;
 int ledVerde            = 11;
-int buzzer              = 12;
 
 //VARIABILI PER I TEMPI SULLE QUALI SI STABILIRA' IL RISULTATO
 int tempoAccensioneLed = 0;
@@ -39,7 +39,7 @@ void loop() {
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledRosso, LOW);
     
-    lcd.print("Inizia il Test!");
+    lcd.print("INIZIA IL TEST!");
     delay(2000);
     lcd.clear();    
       
@@ -53,13 +53,13 @@ void loop() {
     if (tempoAccensioneLed < 500 && tempoBuzzer < 500)
     {
       lcd.clear();
-      lcd.print("Test superato!");
+      lcd.print("TEST SUERATO!");
       digitalWrite(ledVerde, HIGH);
     }
     else
     {
       lcd.clear();
-      lcd.print("Ritenta!");
+      lcd.print("RITENTA!");
       digitalWrite(ledRosso, HIGH);     
     }
   }
@@ -80,7 +80,7 @@ void primoRiflesso()
     delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO 
   }
 
-  lcd.print(tempoAccensioneLed + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABIL"tempoAccensioneLed"
+  lcd.print(tempoAccensioneLed + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE"tempoAccensioneLed"
   digitalWrite(ledBlu, LOW);
 }
 
