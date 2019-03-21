@@ -35,7 +35,8 @@ void loop() {
   lcd.setCursor(0,0);
   
   if (digitalRead(btn_Inizio) == HIGH)
-  {    
+  { 
+    lcd.clear();
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledRosso, LOW);
     
@@ -53,14 +54,14 @@ void loop() {
     if (tempoAccensioneLed < 500 && tempoBuzzer < 500)
     {
       lcd.clear();
-      lcd.print("TEST SUERATO!");
+      lcd.print("TEST SUPERATO!");
       digitalWrite(ledVerde, HIGH);
     }
     else
     {
       lcd.clear();
       lcd.print("RITENTA!");
-      digitalWrite(ledRosso, HIGH);     
+      digitalWrite(ledRosso, HIGH);  
     }
   }
   else
@@ -87,7 +88,7 @@ void primoRiflesso()
 //CICLO PER IL SECONDO RIFLESSO (BUZZER)
 void secondoRiflesso()
 {
-  delay(random(2000, 8000));                             //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
+  delay(random(3000, 8000));                             //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
   digitalWrite(buzzer, HIGH);
 
   while (digitalRead(btn_SecondoRiflesso) != HIGH)       //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL TERZO BOTTONE
@@ -98,5 +99,5 @@ void secondoRiflesso()
   digitalWrite(buzzer, LOW);
   lcd.setCursor(0, 1);
   lcd.print(tempoBuzzer + s);                            //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE "tempoBuzzer"
-  delay(2000);
+  delay(2500);
 }
