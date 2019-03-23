@@ -1,3 +1,7 @@
+ 
+// Niccolò Torresan 3BI 2018/2019 
+//RILEVATORE DI RIFLESSI
+
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -6,7 +10,7 @@ int btn_Inizio          = 13;
 int btn_PrimoRiflesso   = 1;
 int btn_SecondoRiflesso = 5;
 
-//VARIABILI IN OUTPIUT, OVVERO I LED BLU, ROSSO, VERDE E IL BUZZER
+//VARIABILI IN OUTPUT, OVVERO I LED BLU, ROSSO, VERDE E IL BUZZER
 int ledBlu              = 3;
 int buzzer              = 7;
 int ledRosso            = 9;
@@ -63,9 +67,6 @@ void loop() {
       lcd.print("RITENTA!");
       digitalWrite(ledRosso, HIGH);
     }
-  }
-  else
-  {
   }
 }
 
