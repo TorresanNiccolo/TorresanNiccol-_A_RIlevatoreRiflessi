@@ -1,4 +1,4 @@
-#include <LiquidCrystal_I2C.h>                
+#include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //VARIABILI IN INPUT OVVERO I 3 BOTTONI PRESENTI
@@ -20,7 +20,7 @@ String s = " ms"; //STRINGA CREATA PER EVITARE ERRORI POI NEL DISPLAY
 void setup() {
   lcd.init();
   lcd.backlight();
-  
+
   //STABLISCO QUALE SEGNALE E' IN ENTRATA E QUALE E' IN USCITA
   pinMode(btn_Inizio, INPUT);
   pinMode(btn_PrimoRiflesso, INPUT);
@@ -30,23 +30,23 @@ void setup() {
   pinMode(ledRosso, OUTPUT);
   pinMode(ledVerde, OUTPUT);
 }
- 
-void loop() {   
-  lcd.setCursor(0,0);
-  
+
+void loop() {
+  lcd.setCursor(0, 0);
+
   if (digitalRead(btn_Inizio) == HIGH)
-  { 
+  {
     lcd.clear();
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledRosso, LOW);
-    
+
     lcd.print("INIZIA IL TEST!");
     delay(2000);
-    lcd.clear();    
-      
+    lcd.clear();
+
     tempoAccensioneLed = 0;
     tempoBuzzer = 0;
-    
+
     primoRiflesso();
     secondoRiflesso();
 
@@ -61,7 +61,7 @@ void loop() {
     {
       lcd.clear();
       lcd.print("RITENTA!");
-      digitalWrite(ledRosso, HIGH);  
+      digitalWrite(ledRosso, HIGH);
     }
   }
   else
@@ -78,7 +78,7 @@ void primoRiflesso()
   while (digitalRead(btn_PrimoRiflesso) != HIGH)          //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL SECONDO BOTTONE
   {
     tempoAccensioneLed++;
-    delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO 
+    delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
   }
 
   lcd.print(tempoAccensioneLed + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE"tempoAccensioneLed"
