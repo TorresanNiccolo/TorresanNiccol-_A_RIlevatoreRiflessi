@@ -1,6 +1,7 @@
  
-// Niccolò Torresan 3BI 2018/2019 
-//RILEVATORE DI RIFLESSI
+// Niccolò Torresan 3BI
+// Marzo 2018/2019
+// RILEVATORE DI RIFLESSI
 
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -21,6 +22,9 @@ int tempoAccensioneLed = 0;
 int tempoBuzzer = 0;
 String s = " ms"; //STRINGA CREATA PER EVITARE ERRORI POI NEL DISPLAY
 
+//VARIABILE DI TIPO BOOL CHE VERRA' USATA IN SEGUITO PER STABILIRE SE SI HA BARATO OPPURE NO
+bool errore = false;
+
 void setup() {
   lcd.init();
   lcd.backlight();
@@ -36,13 +40,13 @@ void setup() {
 }
 
 void loop() {
-  lcd.setCursor(0, 0);
-
+  
   if (digitalRead(btn_Inizio) == HIGH)
   {
     lcd.clear();
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledRosso, LOW);
+    errore = false;
 
     lcd.print("INIZIA IL TEST!");
     delay(2000);
@@ -52,20 +56,42 @@ void loop() {
     tempoBuzzer = 0;
 
     primoRiflesso();
-    secondoRiflesso();
-
-    //IF DI CONTROLLO CHE VERIFICA SE L'UTENTE HA SUPERATO O MENO IL TEST
-    if (tempoAccensioneLed < 500 && tempoBuzzer < 500)
+    
+    if (errore == true)                                       //CONTROLLO SE NEL PRIMO RIFLESSO SI SONO VERIFICATI ERRORI E A SECONDA DI QUESTO BLOCCO O CONTINUO LO SVOLGIMENTO DEL PROGRAMMA
     {
-      lcd.clear();
-      lcd.print("TEST SUPERATO!");
-      digitalWrite(ledVerde, HIGH);
+      lcd.setCursor(0, 0);
+      lcd.print("STAI BARANDO, ");
+      lcd.setCursor(0, 1);
+      lcd.print("RICOMINCIA");
+      digitalWrite(ledRosso, HIGH);
     }
     else
     {
-      lcd.clear();
-      lcd.print("RITENTA!");
-      digitalWrite(ledRosso, HIGH);
+      secondoRiflesso();
+      
+      if (errore == true)                                     //CONTROLLO SE NEL SECONDO RIFLESSO SI SONO VERIFICATI ERRORI E A SECONDA DI QUESTO BLOCCO O CONTINUO LO SVOLGIMENTO DEL PROGRAMMA
+      {
+        lcd.setCursor(0, 0);
+        lcd.print("STAI BARANDO,");
+        lcd.setCursor(0, 1);
+        lcd.print("RICOMINCIA!");
+        digitalWrite(ledRosso, HIGH);
+      }
+      else
+      {                                                     
+        if (tempoAccensioneLed <= 500 && tempoBuzzer <= 500)  //IF DI CONTROLLO CHE VERIFICA SE L'UTENTE HA PASSATO O MENO IL TEST
+        {
+          lcd.clear();
+          lcd.print("TEST SUPERATO!");
+          digitalWrite(ledVerde, HIGH);
+        }
+         else
+        {
+          lcd.clear();
+          lcd.print("RITENTA!");
+          digitalWrite(ledRosso, HIGH);
+        } 
+      }
     }
   }
 }
@@ -74,31 +100,46 @@ void loop() {
 void primoRiflesso()
 {
   delay(random(2000, 8000));                              //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
-  digitalWrite(ledBlu, HIGH);
 
-  while (digitalRead(btn_PrimoRiflesso) != HIGH)          //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL SECONDO BOTTONE
+  if (digitalRead(ledBlu) == LOW && digitalRead(btn_PrimoRiflesso) == HIGH)
   {
-    tempoAccensioneLed++;
-    delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
+    errore = true;
   }
+  else
+  {  
+    digitalWrite(ledBlu, HIGH);
+    while (digitalRead(btn_PrimoRiflesso) != HIGH)          //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL SECONDO BOTTONE
+    {
+      tempoAccensioneLed++;
+      delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
+    }
 
-  lcd.print(tempoAccensioneLed + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE"tempoAccensioneLed"
-  digitalWrite(ledBlu, LOW);
+    lcd.print(tempoAccensioneLed + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE"tempoAccensioneLed"
+    digitalWrite(ledBlu, LOW);
+  }
 }
 
 //CICLO PER IL SECONDO RIFLESSO (BUZZER)
 void secondoRiflesso()
 {
   delay(random(3000, 8000));                             //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
-  digitalWrite(buzzer, HIGH);
 
-  while (digitalRead(btn_SecondoRiflesso) != HIGH)       //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL TERZO BOTTONE
+  if(digitalRead(buzzer) == LOW && digitalRead(btn_SecondoRiflesso) == HIGH)
   {
-    tempoBuzzer++;
-    delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
+    errore = true;
   }
-  digitalWrite(buzzer, LOW);
-  lcd.setCursor(0, 1);
-  lcd.print(tempoBuzzer + s);                            //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE "tempoBuzzer"
-  delay(2500);
+  else
+  {
+    digitalWrite(buzzer, HIGH);
+    while (digitalRead(btn_SecondoRiflesso) != HIGH)       //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL TERZO BOTTONE
+    {
+      tempoBuzzer++;
+      delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
+    }
+    
+    digitalWrite(buzzer, LOW);
+    lcd.setCursor(0, 1);                                   //IMPOSTO IL CURSORE PER SCRIVERE NELLA SECONDA RIGA DEL DISPLAY
+    lcd.print(tempoBuzzer + s);                            //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE "tempoBuzzer"
+    delay(2500);
+  }
 }
