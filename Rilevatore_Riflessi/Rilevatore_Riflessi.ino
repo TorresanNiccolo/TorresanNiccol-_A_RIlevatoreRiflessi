@@ -60,9 +60,9 @@ void loop() {
     if (errore == true)                                       //CONTROLLO SE NEL PRIMO RIFLESSO SI SONO VERIFICATI ERRORI E A SECONDA DI QUESTO BLOCCO O CONTINUO LO SVOLGIMENTO DEL PROGRAMMA
     {
       lcd.setCursor(0, 0);
-      lcd.print("STAI BARANDO, ");
+      lcd.print("NON IMBROGLIARE, ");
       lcd.setCursor(0, 1);
-      lcd.print("RICOMINCIA");
+      lcd.print("RICOMINCIA!");
       digitalWrite(ledRosso, HIGH);
     }
     else
@@ -72,7 +72,7 @@ void loop() {
       if (errore == true)                                     //CONTROLLO SE NEL SECONDO RIFLESSO SI SONO VERIFICATI ERRORI E A SECONDA DI QUESTO BLOCCO O CONTINUO LO SVOLGIMENTO DEL PROGRAMMA
       {
         lcd.setCursor(0, 0);
-        lcd.print("STAI BARANDO,");
+        lcd.print("NON IMBROGLIARE,");
         lcd.setCursor(0, 1);
         lcd.print("RICOMINCIA!");
         digitalWrite(ledRosso, HIGH);
