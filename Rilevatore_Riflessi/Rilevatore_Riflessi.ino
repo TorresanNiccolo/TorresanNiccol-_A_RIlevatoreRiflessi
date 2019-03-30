@@ -1,4 +1,4 @@
- 
+° 
 // Niccolò Torresan 3BI
 // Marzo 2018/2019
 // RILEVATORE DI RIFLESSI
@@ -18,9 +18,13 @@ int ledRosso            = 9;
 int ledVerde            = 11;
 
 //VARIABILI PER I TEMPI SULLE QUALI SI STABILIRA' IL RISULTATO
-int tempoAccensioneLed = 0;
-int tempoBuzzer = 0;
-String s = " ms"; //STRINGA CREATA PER EVITARE ERRORI POI NEL DISPLAY
+int tempoAccensioneLed  = 0;
+int tempoBuzzer         = 0;
+
+//STRINGHE CREATE PER EVITARE ERRORI DI SCRITTURA NEL DISPLAY
+String s = " ms";
+String s1 = "TEST 1: ";
+String s2 = "TEST 2: ";
 
 //VARIABILE DI TIPO BOOL CHE VERRA' USATA IN SEGUITO PER STABILIRE SE SI HA BARATO OPPURE NO
 bool errore = false;
@@ -56,41 +60,43 @@ void loop() {
     tempoBuzzer = 0;
 
     primoRiflesso();
-    
-    if (errore == true)                                       //CONTROLLO SE NEL PRIMO RIFLESSO SI SONO VERIFICATI ERRORI E A SECONDA DI QUESTO BLOCCO O CONTINUO LO SVOLGIMENTO DEL PROGRAMMA
+
+    if (errore == true)                                       //IF CHE NEL CASO L'UTENTE ABBIA BARATO NEL PRIMO TEST BLOCCA L'ESECUZIONE DELL'ESAME
     {
-      lcd.setCursor(0, 0);
-      lcd.print("NON IMBROGLIARE, ");
-      lcd.setCursor(0, 1);
-      lcd.print("RICOMINCIA!");
+      lcd.clear();
+      digitalWrite(ledBlu, LOW);
       digitalWrite(ledRosso, HIGH);
+      lcd.print("HAI IMBROGLIATO");
+      lcd.setCursor(0, 1);
+      lcd.print("TEST NON VALIDO!");
     }
     else
     {
       secondoRiflesso();
-      
-      if (errore == true)                                     //CONTROLLO SE NEL SECONDO RIFLESSO SI SONO VERIFICATI ERRORI E A SECONDA DI QUESTO BLOCCO O CONTINUO LO SVOLGIMENTO DEL PROGRAMMA
+
+      if (errore == true)                                     //IF CHE NEL CASO L'UTENTE ABBIA BARATO NEL PRIMO TEST BLOCCA L'ESECUZIONE DELL'ESAME
       {
-        lcd.setCursor(0, 0);
-        lcd.print("NON IMBROGLIARE,");
-        lcd.setCursor(0, 1);
-        lcd.print("RICOMINCIA!");
+        lcd.clear();
+        digitalWrite(buzzer, LOW);
         digitalWrite(ledRosso, HIGH);
+        lcd.print("HAI IMBROGLIATO");
+        lcd.setCursor(0, 1);
+        lcd.print("TEST NON VALIDO!");
       }
       else
-      {                                                     
+      {
         if (tempoAccensioneLed <= 500 && tempoBuzzer <= 500)  //IF DI CONTROLLO CHE VERIFICA SE L'UTENTE HA PASSATO O MENO IL TEST
         {
           lcd.clear();
           lcd.print("TEST SUPERATO!");
-          digitalWrite(ledVerde, HIGH);
+           digitalWrite(ledVerde, HIGH);
         }
-         else
+        else
         {
           lcd.clear();
           lcd.print("RITENTA!");
           digitalWrite(ledRosso, HIGH);
-        } 
+        }
       }
     }
   }
@@ -99,22 +105,22 @@ void loop() {
 //CICLO PER IL PRIMO RIFLESSO (LED BLU)
 void primoRiflesso()
 {
-  delay(random(2000, 8000));                              //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
-
-  if (digitalRead(ledBlu) == LOW && digitalRead(btn_PrimoRiflesso) == HIGH)
+  delay(random(1000, 8000));                              //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
+  digitalWrite(ledBlu, HIGH);
+  
+  while (digitalRead(btn_PrimoRiflesso) != HIGH)         //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL SECONDO BOTTONE
+ {
+    tempoAccensioneLed++;
+    delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
+  }
+  
+  if (tempoAccensioneLed <= 100)                         //IF CHE VERIFICA SE L'UTENTE HA BARATO E IN QUESTO CASO LA VARIABILE "errore" DA FALSO DIVENTA TRUE
   {
     errore = true;
   }
   else
-  {  
-    digitalWrite(ledBlu, HIGH);
-    while (digitalRead(btn_PrimoRiflesso) != HIGH)          //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL SECONDO BOTTONE
-    {
-      tempoAccensioneLed++;
-      delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
-    }
-
-    lcd.print(tempoAccensioneLed + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE"tempoAccensioneLed"
+  {
+    lcd.print(s1 + tempoAccensioneLed + s);                //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE"tempoAccensioneLed"
     digitalWrite(ledBlu, LOW);
   }
 }
@@ -122,24 +128,26 @@ void primoRiflesso()
 //CICLO PER IL SECONDO RIFLESSO (BUZZER)
 void secondoRiflesso()
 {
+  errore = false;
+  
   delay(random(3000, 8000));                             //GENERO UN NUMERO RANDOM IN MILLISECONDI DOVE IN QUEL PRECISO TEMPO IL LED SI ACCENDERA'
-
-  if(digitalRead(buzzer) == LOW && digitalRead(btn_SecondoRiflesso) == HIGH)
+  digitalWrite(buzzer, HIGH);
+  
+  while (digitalRead(btn_SecondoRiflesso) != HIGH)       //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL TERZO BOTTONE
+  {
+    tempoBuzzer++;
+    delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
+  }
+  
+  if (tempoBuzzer <= 100)                                //IF CHE VERIFICA SE L'UTENTE HA BARATO E IN QUESTO CASO LA VARIABILE "errore" DA FALSO DIVENTA TRUE
   {
     errore = true;
   }
   else
   {
-    digitalWrite(buzzer, HIGH);
-    while (digitalRead(btn_SecondoRiflesso) != HIGH)       //CICLO DOVE IL TEMPO AUMENTA FINO A CHE L'UTENTE NON PREME IL TERZO BOTTONE
-    {
-      tempoBuzzer++;
-      delay(1);                                            //IL TEMPO AUMENTA DI UN MILLISECONDO OGNI CICLO
-    }
-    
     digitalWrite(buzzer, LOW);
-    lcd.setCursor(0, 1);                                   //IMPOSTO IL CURSORE PER SCRIVERE NELLA SECONDA RIGA DEL DISPLAY
-    lcd.print(tempoBuzzer + s);                            //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE "tempoBuzzer"
+    lcd.setCursor(0, 1);                                 //IMPOSTO IL CURSORE PER SCRIVERE NELLA SECONDA RIGA DEL DISPLAY
+    lcd.print(s2 + tempoBuzzer + s);                     //SCRIVO SUL DISPLAY IL CONTENUTO DELLA VARIABILE "tempoBuzzer"
     delay(2500);
   }
 }
