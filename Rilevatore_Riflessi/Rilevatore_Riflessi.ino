@@ -8,7 +8,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //VARIABILI IN INPUT OVVERO I 3 BOTTONI PRESENTI
 int btn_Inizio          = 13;
-int btn_PrimoRiflesso   = 1;
+int btn_PrimoRiflesso   = 2;
 int btn_SecondoRiflesso = 5;
 
 //VARIABILI IN OUTPUT, OVVERO I LED BLU, ROSSO, VERDE E IL BUZZER
