@@ -1,4 +1,4 @@
-° 
+
 // Niccolò Torresan 3BI
 // Marzo 2018/2019
 // RILEVATORE DI RIFLESSI
